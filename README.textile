@@ -1,0 +1,22 @@
+h1. SKLES: Ruby interface for StrongKey Lite boxes
+
+| *Author* | Tim Morgan |
+| *Version* | Version 1.0 (Nov 13, 2010) |
+| *License* | Released under the MIT license. |
+
+The SKLES gem is an interface to StrongAuth's StrongKey Lite credit card vault
+system (http://www.strongauth.com/). You will need a StrongKey Lite install to
+make any reasonable use of this gem.
+
+
+Usage is simple:
+
+<pre><code>
+require 'skles'
+skles = StrongKeyLite.new('http://your.strongauth.server', your_domain_id)
+skles.add_user('encrypt_only', 'password', :encrypt)
+skles.add_user('decrypt_only', 'password', :decrypt)
+
+skles.encrypt('1234123412341234') #=> token
+skles.decrypt(token) #=> credit card number
+</code></pre>
