@@ -2,16 +2,15 @@ GEM
   remote: http://rubygems.org/
   specs:
     RedCloth (4.2.3)
-    builder (2.1.2)
+    builder (3.0.0)
     crack (0.1.8)
     diff-lcs (1.1.2)
-    gemcutter (0.6.1)
     git (1.2.5)
-    jeweler (1.4.0)
-      gemcutter (>= 0.1.0)
+    jeweler (1.5.1)
+      bundler (~> 1.0.0)
       git (>= 1.2.5)
-      rubyforge (>= 2.0.0)
-    json_pure (1.4.6)
+      rake
+    rake (0.8.7)
     rspec (2.1.0)
       rspec-core (~> 2.1.0)
       rspec-expectations (~> 2.1.0)
@@ -20,12 +19,10 @@ GEM
     rspec-expectations (2.1.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.1.0)
-    rubyforge (2.0.4)
-      json_pure (>= 1.1.7)
     savon (0.7.9)
       builder (>= 2.1.2)
       crack (>= 0.1.4)
-    yard (0.6.1)
+    yard (0.6.2)
 
 PLATFORMS
   ruby
@@ -36,3 +33,6 @@ DEPENDENCIES
   rspec
   savon
   yard
+
+METADATA
+  version: 1.0.6

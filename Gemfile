@@ -1,12 +1,10 @@
 source :rubygems
 
-# DEPENDENCIES
 gem 'savon'
 
-# DEVELOPMENT
-gem 'jeweler'
-gem 'yard'
-gem 'RedCloth', require: 'redcloth'
-
-# TEST
-gem 'rspec'
+group :development do
+  gem 'jeweler'
+  gem 'yard'
+  gem 'RedCloth', require: 'redcloth'
+  gem 'rspec'
+end

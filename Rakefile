@@ -1,13 +1,15 @@
-require 'rake'
+require 'rubygems'
+require 'bundler'
 begin
-  require 'bundler'
-rescue LoadError
-  puts "Bundler is not installed; install with `gem install bundler`."
-  exit 1
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
 end
+require 'rake'
 
-Bundler.require :default
-
+require 'jeweler'
 Jeweler::Tasks.new do |gem|
   gem.name = "skles"
   gem.summary = %Q{Ruby interface for SKLES (StrongKey Light Encryption System) boxes}
@@ -15,14 +17,14 @@ Jeweler::Tasks.new do |gem|
   gem.email = "git@timothymorgan.info"
   gem.homepage = "http://github.com/RISCfuture/skles"
   gem.authors = [ "Tim Morgan" ]
-  gem.add_dependency 'savon'
   gem.required_ruby_version = '>= 1.9'
 end
-Jeweler::GemcutterTasks.new
+Jeweler::RubygemsDotOrgTasks.new
 
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 
+require 'yard'
 YARD::Rake::YardocTask.new('doc') do |doc|
   doc.options << "-m" << "textile"
   doc.options << "--protected"
