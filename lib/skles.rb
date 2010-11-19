@@ -3,6 +3,8 @@ require File.dirname(__FILE__) + '/skles_api'
 
 # can't have plaintext CC #s being logged
 Savon::Request.log = false
+# We have our own error raising
+Savon::Response.raise_errors = false
 
 # Client for the StrongKey Lite Encryption System (SKLES) SOAP-based API. An
 # instance of this API interfaces with your StrongKey Lite box to encrypt and
@@ -122,8 +124,8 @@ class StrongKeyLite
     password = @users[login]
     
     response = @client.send(meth) { |soap| soap.body = { did: domain_id, username: login, password: password }.merge(options) }
-    raise SOAPError(response.soap_fault, response) if response.soap_fault?
-    raise HTTPError(response.http_error, response) if response.http_error?
+    raise SOAPError.new(response.soap_fault, response) if response.soap_fault?
+    raise HTTPError.new(response.http_error, response) if response.http_error?
 
     return response.to_hash
   end
