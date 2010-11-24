@@ -146,7 +146,17 @@ class StrongKeyLite
 
   # Raised when SOAP responses indicate errors.
 
-  class SOAPError < ResponseError; end
+  class SOAPError < ResponseError
+    attr_reader :code
+    
+    # @private
+    def initialize(msg, response)
+      super
+      if code_match = msg.match(/SKL-ERR-(\d+)/) then
+        @code = code_match[1].try(:to_i)
+      end
+    end
+  end
 
   # Raised when @Net::HTTP@ returns a response other than 200 OK, or there is a
   # socket error.
