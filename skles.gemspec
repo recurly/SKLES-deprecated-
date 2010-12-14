@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{skles}
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tim Morgan"]
-  s.date = %q{2010-11-22}
+  s.date = %q{2010-12-14}
   s.description = %q{A Ruby wrapper around the StrongKey Lite SOAP client API.}
   s.email = %q{git@timothymorgan.info}
   s.extra_rdoc_files = [
