@@ -11,18 +11,18 @@ GEM
       git (>= 1.2.5)
       rake
     rake (0.8.7)
-    rspec (2.1.0)
-      rspec-core (~> 2.1.0)
-      rspec-expectations (~> 2.1.0)
-      rspec-mocks (~> 2.1.0)
-    rspec-core (2.1.0)
-    rspec-expectations (2.1.0)
+    rspec (2.3.0)
+      rspec-core (~> 2.3.0)
+      rspec-expectations (~> 2.3.0)
+      rspec-mocks (~> 2.3.0)
+    rspec-core (2.3.0)
+    rspec-expectations (2.3.0)
       diff-lcs (~> 1.1.2)
-    rspec-mocks (2.1.0)
+    rspec-mocks (2.3.0)
     savon (0.7.9)
       builder (>= 2.1.2)
       crack (>= 0.1.4)
-    yard (0.6.2)
+    yard (0.6.3)
 
 PLATFORMS
   ruby
@@ -33,6 +33,3 @@ DEPENDENCIES
   rspec
   savon
   yard
-
-METADATA
-  version: 1.0.6
