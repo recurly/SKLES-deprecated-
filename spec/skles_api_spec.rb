@@ -12,7 +12,7 @@ describe StrongKeyLite::API do
     before :each do
       @time = mock('Time')
       Time.stub!(:parse).and_return(@time)
-      @client.should_receive(:ping).once.and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :ping).and_return(@response)
     end
 
     it "should parse the ping response" do
@@ -76,8 +76,8 @@ SKLES Domain 21 is alive!
       @response.stub(:to_hash).and_return(encrypt_response: { return: '123456' })
       soap = mock('Savon::SOAP')
       soap.should_receive(:body=).once.with(hash_including(plaintext: 'plaintext'))
-
-      @client.should_receive(:encrypt).once.and_yield(soap).and_return(@response)
+      
+      @client.should_receive(:request).once.with(:wsdl, :encrypt).and_yield(soap).and_return(@response)
 
       @skles.encrypt('plaintext').should eql('123456')
     end
@@ -92,7 +92,7 @@ SKLES Domain 21 is alive!
       soap = mock('Savon::SOAP')
       soap.should_receive(:body=).once.with(hash_including(token: '123456'))
 
-      @client.should_receive(:decrypt).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :decrypt).and_yield(soap).and_return(@response)
 
       @skles.decrypt('123456').should eql('plaintext')
     end
@@ -107,7 +107,7 @@ SKLES Domain 21 is alive!
       soap = mock('Savon::SOAP')
       soap.should_receive(:body=).once.with(hash_including(token: '123456'))
 
-      @client.should_receive(:delete).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :delete).and_yield(soap).and_return(@response)
 
       @skles.delete('123456').should be_true
     end
@@ -122,7 +122,7 @@ SKLES Domain 21 is alive!
       soap = mock('Savon::SOAP')
       soap.should_receive(:body=).once.with(hash_including(plaintext: 'plaintext'))
 
-      @client.should_receive(:search).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :search).and_yield(soap).and_return(@response)
 
       @skles.search('plaintext').should eql('123456')
     end

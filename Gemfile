@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'httpclient' # http adapter for savon
 gem 'savon'
 
 group :development do

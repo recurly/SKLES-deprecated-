@@ -1,10 +1,10 @@
 require 'savon'
 require File.dirname(__FILE__) + '/skles_api'
 
-# can't have plaintext CC #s being logged
-Savon::Request.log = false
-# We have our own error raising
-Savon::Response.raise_errors = false
+Savon.configure do |config|
+  config.log = false # can't have plaintext CC #s being logged
+  config.raise_errors = false # We have our own error raising
+end
 
 # Client for the StrongKey Lite Encryption System (SKLES) SOAP-based API. An
 # instance of this API interfaces with your StrongKey Lite box to encrypt and
@@ -41,13 +41,18 @@ class StrongKeyLite
   # @option options [String] :login You can provide the login of a user who will
   #   be used for all actions.
   # @option options [String] :password The password for this user.
-  # @option options [Hash] :http Additional options to be given to the
-  #   @Net::HTTP@ object. The keys will be invoked as setter methods on the HTTP
-  #   object (_e.g._, passing @http: { timeout: 60 }@ will result in a call like
-  #   @http.timeout = 60@).
+  # @yield [http] HTTP configuration block.
+  # @yieldparam [HTTPI::Request] http The HTTP request object, for configuring.
+  #   See the HTTPI gem documentation for more information.
+  #
+  # @example Setting a custom timeout
+  #   StrongKeyLite.new(url, domain) { |http| http.read_timeout = 60 }
 
   def initialize(service_url, domain_id, options={})
-    @client = Savon::Client.new("#{service_url}/strongkeyliteWAR/EncryptionService?wsdl")
+    @client = Savon::Client.new do |wsdl, http, wsse|
+      wsdl.document = "#{service_url}/strongkeyliteWAR/EncryptionService?wsdl"
+      yield http if block_given?
+    end
     options[:http].each { |key, val| @client.request.http.send :"#{key}=", val } if options[:http].kind_of?(Hash)
 
     self.domain_id = domain_id
@@ -123,7 +128,7 @@ class StrongKeyLite
     raise "No user has been assigned to action #{meth.inspect}" unless login
     password = @users[login]
     
-    response = @client.send(meth) { |soap| soap.body = { did: domain_id, username: login, password: password }.merge(options) }
+    response = @client.request(:wsdl, meth) { |soap| soap.body = { did: domain_id, username: login, password: password }.merge(options) }
     raise SOAPError.new(response.soap_fault, response) if response.soap_fault?
     raise HTTPError.new(response.http_error, response) if response.http_error?
 
@@ -138,8 +143,8 @@ class StrongKeyLite
     attr_reader :response
 
     # @private
-    def initialize(msg, response)
-      super msg
+    def initialize(error, response)
+      super error.to_s
       @response = response
     end
   end
@@ -150,9 +155,9 @@ class StrongKeyLite
     attr_reader :code
     
     # @private
-    def initialize(msg, response)
+    def initialize(fault, response)
       super
-      if code_match = msg.match(/SKL-ERR-(\d+)/) then
+      if code_match = fault.to_s.match(/SKL-ERR-(\d+)/) then
         @code = code_match[1].try(:to_i)
       end
     end

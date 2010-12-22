@@ -1,15 +1,9 @@
 require 'spec_helper'
 
 describe StrongKeyLite do
-  before :each do
-    @client = mock('Savon::Client', request: nil)
-    Savon::Client.stub!(:new).and_return(@client)
-  end
-
   describe "#initialize" do
     it "should accept a host for the WSDL" do
-      Savon::Client.should_receive(:new).once.with("http://test.host/strongkeyliteWAR/EncryptionService?wsdl").and_return(@client)
-      StrongKeyLite.new('http://test.host', 1)
+      StrongKeyLite.new('http://test.host', 1).instance_variable_get(:@client).wsdl.instance_variable_get(:@document).should eql("http://test.host/strongkeyliteWAR/EncryptionService?wsdl")
     end
 
     it "should set the domain ID" do
@@ -17,12 +11,7 @@ describe StrongKeyLite do
     end
 
     it "should accept and apply HTTP options" do
-      http = mock('Net::HTTP')
-      request = mock('Savon::Request', http: http)
-      @client.stub!(:request).and_return(request)
-
-      http.should_receive(:timeout=).once.with(60)
-      StrongKeyLite.new('http://test.host', 1, http: { timeout: 60 })
+      StrongKeyLite.new('http://test.host', 1) { |http| http.read_timeout = 60 }.instance_variable_get(:@client).http.read_timeout.should eql(60)
     end
 
     it "should optionally accept a login and password" do
@@ -31,6 +20,11 @@ describe StrongKeyLite do
   end
 
   describe "#call" do
+    before :each do
+      @client = mock('Savon::Client', request: nil)
+      Savon::Client.stub!(:new).and_return(@client)
+    end
+    
     before :each do
       @client = mock('Savon::Client', request: nil, wsdl: mock('Savon::WSDL', soap_actions: [ :ping ]))
       Savon::Client.stub!(:new).and_return(@client)
@@ -49,7 +43,7 @@ describe StrongKeyLite do
       
       soap = mock('Savon::Request')
       soap.should_receive(:body=).once.with({ did: 1, username: 'login', password: 'password' })
-      @client.should_receive(:ping).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
 
@@ -58,7 +52,7 @@ describe StrongKeyLite do
 
       soap = mock('Savon::Request')
       soap.should_receive(:body=).once.with({ did: 1, username: 'all', password: 'password' })
-      @client.should_receive(:ping).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
 
@@ -68,7 +62,7 @@ describe StrongKeyLite do
 
       soap = mock('Savon::Request')
       soap.should_receive(:body=).once.with({ did: 1, username: 'ping', password: 'password' })
-      @client.should_receive(:ping).once.and_yield(soap).and_return(@response)
+      @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
     
@@ -76,7 +70,7 @@ describe StrongKeyLite do
       @skles.add_user('all', 'password', :all)
       soap = mock('Savon::Request')
       soap.stub!(:body=)
-      @client.stub!(:ping).and_yield(soap).and_return(@response)
+      @client.stub!(:request).and_yield(soap).and_return(@response)
       @response.stub!(:http_error?).and_return(true)
       @response.stub!(:http_error).and_return("404 Not Found")
       
@@ -87,7 +81,7 @@ describe StrongKeyLite do
       @skles.add_user('all', 'password', :all)
       soap = mock('Savon::Request')
       soap.stub!(:body=)
-      @client.stub!(:ping).and_yield(soap).and_return(@response)
+      @client.stub!(:request).and_yield(soap).and_return(@response)
       @response.stub!(:soap_fault?).and_return(true)
       @response.stub!(:soap_fault).and_return("Not enough XML")
       
