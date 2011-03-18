@@ -1,7 +1,7 @@
 h1. SKLES: Ruby interface for StrongKey Lite boxes
 
 | *Author* | Tim Morgan |
-| *Version* | Version 1.0.1 (Nov 22, 2010) |
+| *Version* | Version 1.1 (Mar 18, 2011) |
 | *License* | Released under the MIT license. |
 
 The SKLES gem is an interface to StrongAuth's StrongKey Lite credit card vault
