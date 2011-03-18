@@ -1,4 +1,5 @@
 require 'savon'
+require File.dirname(__FILE__) + '/skles_extensions'
 require File.dirname(__FILE__) + '/skles_api'
 
 Savon.configure do |config|
@@ -133,6 +134,14 @@ class StrongKeyLite
     raise HTTPError.new(response.http_error, response) if response.http_error?
 
     return response.to_hash
+  end
+  
+  # Sets the HTTPI adapter to use for Savon. By default it's @:net_http@.
+  #
+  # @param [Symbol] adapter The HTTPI adapter to use.
+  
+  def self.http_adapter=(adapter)
+    Savon.http_adapter = adapter
   end
 
   # Superclass of all {StrongKeyLite} exceptions.
