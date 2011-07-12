@@ -16,8 +16,12 @@ class Savon::SOAP::Request
   end
 end
 
-class Savon::WSDL::Request
-  def response
-    @response ||= with_logging { HTTPI.get request, Savon.http_adapter }
+class Savon::Wasabi::Document
+  def resolve_document
+    case document
+      when /^http[s]?:/ then HTTPI.get(request, Savon.http_adapter).body
+      when /^</         then document
+      else                   File.read(document)
+    end
   end
 end
